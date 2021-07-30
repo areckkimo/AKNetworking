@@ -7,7 +7,7 @@
 
 import Foundation
 
-class OAuth2PasswordGrant{
+public class OAuth2PasswordGrant{
     var request: OAuth2PasswordGrantAccessTokenRequest
     
     init(request: OAuth2PasswordGrantAccessTokenRequest) {

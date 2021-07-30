@@ -16,7 +16,7 @@ public enum AuthorizationType{
     case JWT
 }
 
-enum APIKeyPlace {
+public enum APIKeyPlace {
     case Header
     case URLQueryParameter
 }
