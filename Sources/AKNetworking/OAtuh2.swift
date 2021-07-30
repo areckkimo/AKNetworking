@@ -30,21 +30,26 @@ public class OAuth2PasswordGrant{
 }
 
 public struct OAuth2PasswordGrantAccessTokenRequest: HTTPRequest {
-    var url: URL
+    public var url: URL
     
-    var parameters: [String : Any] {
+    public var parameters: [String : Any] {
         return defaultParameters.encode()
     }
     
-    var authorizationType: AuthorizationType = .NoAuth
+    public var authorizationType: AuthorizationType = .NoAuth
     
-    typealias successResponse = OAuth2PasswordGrantSuccessType
-    typealias failureResponse = OAuth2PasswordGrantFailType
+    public typealias successResponse = OAuth2PasswordGrantSuccessType
+    public typealias failureResponse = OAuth2PasswordGrantFailType
     
-    var method: HTTPMethod = .POST
-    var contentType: ContentType = .xWWWFormURLEncoded
+    public var method: HTTPMethod = .POST
+    public var contentType: ContentType = .xWWWFormURLEncoded
     
     var defaultParameters: OAuth2PasswordGrantRequestParameters
+    
+    init(url: URL, defaultParameters: OAuth2PasswordGrantRequestParameters) {
+        self.url = url
+        self.defaultParameters = defaultParameters
+    }
 }
 
 public protocol OAuth2PasswordGrantDecodable {
