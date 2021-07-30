@@ -29,7 +29,7 @@ public class OAuth2PasswordGrant{
     }
 }
 
-struct OAuth2PasswordGrantAccessTokenRequest: HTTPRequest {
+public struct OAuth2PasswordGrantAccessTokenRequest: HTTPRequest {
     var url: URL
     
     var parameters: [String : Any] {
@@ -47,7 +47,7 @@ struct OAuth2PasswordGrantAccessTokenRequest: HTTPRequest {
     var defaultParameters: OAuth2PasswordGrantRequestParameters
 }
 
-protocol OAuth2PasswordGrantDecodable {
+public protocol OAuth2PasswordGrantDecodable {
     
     associatedtype sucessDecodeType: Codable
     associatedtype failureDecodeType: Codable
@@ -56,7 +56,7 @@ protocol OAuth2PasswordGrantDecodable {
     var request: OAuth2PasswordGrantRequestParameters{get}
 }
 
-protocol OAuth2PasswordGrantRequestParameters {
+public protocol OAuth2PasswordGrantRequestParameters {
     var grantType: String {get}
     var username: String {get}
     var password: String {get}
