@@ -36,10 +36,8 @@ public class AKNetworking {
                     let accessToken = response.accessToken
                     let tokenType = response.tokenType
                     //save access token and token type
-                    let keychainByService = KeychainWrapper(serviceName: service)
-                    let a = KeychainWrapper.standard.set(tokenType, forKey: "token_type")
-                    print(a)
-                    keychainByService.set(accessToken, forKey: "access_token")
+                    KeychainWrapper.standard.set(tokenType, forKey: "\(service)_token_type")
+                    KeychainWrapper.standard.set(accessToken, forKey: "\(service)_access_token")
                     //retry request
                     self.send(request, completionHandle: completionHandle)
                 case .failure(let error):

@@ -117,8 +117,7 @@ struct OAuth2PasswordGrantAdapter: RequestAdapter {
     let grant: OAuth2PasswordGrant
     func adapted(_ request: URLRequest) throws -> URLRequest {
         var request = request
-        let keychainByService = KeychainWrapper(serviceName: service)
-        guard let accessToken = keychainByService.string(forKey: "access_token"), let tokenType = keychainByService.string(forKey: "token_type") else {
+        guard let accessToken = KeychainWrapper.standard.string(forKey: "\(service)_access_token"), let tokenType = KeychainWrapper.standard.string(forKey: "\(service)_token_type") else {
             throw OAuth2Error.passwordGrantUnauthorized(service: service, grant: grant)
         }
         request.addValue("\(tokenType) \(accessToken)", forHTTPHeaderField: "Authorization")
