@@ -10,7 +10,7 @@ import Foundation
 public class OAuth2PasswordGrant{
     var request: OAuth2PasswordGrantAccessTokenRequest
     
-    init(request: OAuth2PasswordGrantAccessTokenRequest) {
+    public init(request: OAuth2PasswordGrantAccessTokenRequest) {
         self.request = request
     }
     
