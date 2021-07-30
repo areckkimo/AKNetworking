@@ -70,14 +70,14 @@ extension OAuth2PasswordGrantRequestParameters {
     }
 }
 
-protocol OAuth2PasswordGrantSuccessResponse: Codable {
+public protocol OAuth2PasswordGrantSuccessResponse: Codable {
     var accessToken: String {get}
     var tokenType: String {get}
     var expiresIn: Int? {get}
     var refreshToken: String? {get}
 }
 
-protocol OAuth2PasswordGrantFailureResponse: Codable {
+public protocol OAuth2PasswordGrantFailureResponse: Codable {
     var error: String? {get}
     var errorDescription: String? {get}
     var errorURI: String? {get}

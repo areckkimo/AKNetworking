@@ -16,7 +16,7 @@ public class AKNetworking {
         self.session = session
     }
     
-    func send<Req: HTTPRequest>(_ request:Req, decisions: [Decision]? = nil, completionHandle: @escaping (Result<Req.successResponse, Error>)->Void){
+    public func send<Req: HTTPRequest>(_ request:Req, decisions: [Decision]? = nil, completionHandle: @escaping (Result<Req.successResponse, Error>)->Void){
         
         let urlRequest: URLRequest
         
