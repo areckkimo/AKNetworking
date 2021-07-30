@@ -16,6 +16,10 @@ public class AKNetworking {
         self.session = session
     }
     
+    public func saveKeyChainTest(){
+        KeychainWrapper.standard.set(1, forKey: "1")
+    }
+    
     public func send<Req: HTTPRequest>(_ request:Req, decisions: [Decision]? = nil, completionHandle: @escaping (Result<Req.successResponse, Error>)->Void){
         
         let urlRequest: URLRequest
@@ -32,7 +36,7 @@ public class AKNetworking {
                     let tokenType = response.tokenType
                     //save access token and token type
                     let keychainByService = KeychainWrapper(serviceName: service)
-                    let a = keychainByService.set(tokenType, forKey: "token_type")
+                    let a = KeychainWrapper.standard.set(tokenType, forKey: "token_type")
                     print(a)
                     keychainByService.set(accessToken, forKey: "access_token")
                     //retry request
