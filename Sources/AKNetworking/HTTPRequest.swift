@@ -21,7 +21,7 @@ public protocol HTTPRequest {
     var decisions: [Decision] { get }
 }
 
-extension HTTPRequest {
+public extension HTTPRequest {
     var adapters: [RequestAdapter] {
         return [method.adapter, RequestContentAdapter(method: method, contentType: contentType, content: parameters), authorizationType.authoriaztionAdapter()]
     }

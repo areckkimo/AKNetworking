@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 import SwiftKeychainWrapper
 
-protocol RequestAdapter {
+public protocol RequestAdapter {
     func adapted(_ request: URLRequest) throws -> URLRequest
 }
 

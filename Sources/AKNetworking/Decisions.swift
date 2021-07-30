@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol Decision {
+public protocol Decision {
     
     func shouldApply<Req: HTTPRequest>(request: Req, response: HTTPURLResponse, data: Data) -> Bool
     
@@ -16,7 +16,7 @@ protocol Decision {
     
 }
 
-enum DecisionAction<Req: HTTPRequest>{
+public enum DecisionAction<Req: HTTPRequest>{
     case continueWith(Data, HTTPURLResponse)
     case restartWith([Decision])
     case errored(Error)
