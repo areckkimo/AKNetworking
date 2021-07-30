@@ -46,7 +46,7 @@ public struct OAuth2PasswordGrantAccessTokenRequest: HTTPRequest {
     
     var defaultParameters: OAuth2PasswordGrantRequestParameters
     
-    init(url: URL, defaultParameters: OAuth2PasswordGrantRequestParameters) {
+    public init(url: URL, defaultParameters: OAuth2PasswordGrantRequestParameters) {
         self.url = url
         self.defaultParameters = defaultParameters
     }
