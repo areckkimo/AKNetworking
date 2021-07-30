@@ -12,7 +12,7 @@ import SwiftKeychainWrapper
 public class AKNetworking {
     var session: URLSession
     
-    init(session: URLSession = URLSession.shared) {
+    public init(session: URLSession = URLSession.shared) {
         self.session = session
     }
     
