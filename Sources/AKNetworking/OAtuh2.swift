@@ -64,7 +64,7 @@ protocol OAuth2PasswordGrantRequestParameters {
     func encode() -> [String: Any]
 }
 
-extension OAuth2PasswordGrantRequestParameters {
+public extension OAuth2PasswordGrantRequestParameters {
     var grantType: String {
         return "password"
     }
@@ -83,7 +83,7 @@ public protocol OAuth2PasswordGrantFailureResponse: Codable {
     var errorURI: String? {get}
 }
 
-struct OAuth2PasswordGrantSuccessType: Codable {
+public struct OAuth2PasswordGrantSuccessType: Codable {
     var accessToken: String
     var tokenType: String
     var expiresIn: Int?
@@ -97,12 +97,12 @@ struct OAuth2PasswordGrantSuccessType: Codable {
     }
 }
 
-struct OAuth2PasswordGrantFailType: Codable {
+public struct OAuth2PasswordGrantFailType: Codable {
     var error: String?
     var errorDescription: String?
     var errorURI: String?
 }
 
-enum OAuth2Error: Error {
+public enum OAuth2Error: Error {
     case passwordGrantUnauthorized(service: String, grant: OAuth2PasswordGrant)
 }
