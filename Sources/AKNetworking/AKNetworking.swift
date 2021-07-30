@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import SwiftKeychainWrapper
 
-class AKNetworking {
+public class AKNetworking {
     var session: URLSession
     
     init(session: URLSession = URLSession.shared) {
@@ -22,8 +23,24 @@ class AKNetworking {
         do {
             try urlRequest = request.buildRequest()
             
-        } catch OAuth2Error.passwordGrantUnauthorized(let service) {
+        } catch OAuth2Error.passwordGrantUnauthorized(let service, let grant) {
             //retrieve access token
+            grant.retrieveAccessToken { (result) in
+                switch result{
+                case .success(let response):
+                    let accessToken = response.accessToken
+                    let tokenType = response.tokenType
+                    //save access token and token type
+                    let keychainByService = KeychainWrapper(serviceName: service)
+                    let a = keychainByService.set(tokenType, forKey: "token_type")
+                    print(a)
+                    keychainByService.set(accessToken, forKey: "access_token")
+                    //retry request
+                    self.send(request, completionHandle: completionHandle)
+                case .failure(let error):
+                    completionHandle(.failure(error))
+                }
+            }
             return
         } catch {
             completionHandle(.failure(error))

@@ -114,11 +114,12 @@ struct APIKeyAuthAdapter: RequestAdapter {
 
 struct OAuth2PasswordGrantAdapter: RequestAdapter {
     let service: String
+    let grant: OAuth2PasswordGrant
     func adapted(_ request: URLRequest) throws -> URLRequest {
         var request = request
         let keychainByService = KeychainWrapper(serviceName: service)
         guard let accessToken = keychainByService.string(forKey: "access_token"), let tokenType = keychainByService.string(forKey: "token_type") else {
-            throw OAuth2Error.passwordGrantUnauthorized(service: service)
+            throw OAuth2Error.passwordGrantUnauthorized(service: service, grant: grant)
         }
         request.addValue("\(tokenType) \(accessToken)", forHTTPHeaderField: "Authorization")
         return request
@@ -162,8 +163,8 @@ extension AuthorizationType {
             return APIKeyAuthAdapter(key: key, value: value, place: place)
         case .BasicAuth(let userName, let password):
             return BasicAuthAdapter(userName: userName, password: password)
-        case .OAuth2PasswordGrant(let service):
-            return OAuth2PasswordGrantAdapter(service: service)
+        case .OAuth2PasswordGrant(let service, let grant):
+            return OAuth2PasswordGrantAdapter(service: service, grant: grant)
         default:
             return AnyAdapter { $0 }
         }

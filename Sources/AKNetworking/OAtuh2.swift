@@ -7,18 +7,17 @@
 
 import Foundation
 
-class OAuth2PasswordGrant<S, F>{
-    var accessTokenURL: URL
-    var parameters: OAuth2PasswordGrantRequestParameters
+class OAuth2PasswordGrant{
+    var request: OAuth2PasswordGrantAccessTokenRequest
     
-    init(accessTokenURL: URL, parameters: OAuth2PasswordGrantRequestParameters) {
-        self.accessTokenURL = accessTokenURL
-        self.parameters = parameters
+    init(request: OAuth2PasswordGrantAccessTokenRequest) {
+        self.request = request
     }
     
-    func retrieveAccessToken<Success: Codable, Fail: Codable>(responseSuccess: Success, responseFail: Fail, completion: @escaping (Result<Success, Error>)->Void) {
+    typealias Success = OAuth2PasswordGrantAccessTokenRequest.successResponse
+    
+    func retrieveAccessToken(completion: @escaping (Result<Success, Error>)->Void) {
         let akNetworking = AKNetworking()
-        let request = OAuth2PasswordGrantAccessTokenRequest<Success, Fail>(url: accessTokenURL, defaultParameters: parameters)
         akNetworking.send(request) { (result) in
             switch result{
             case .success(let response):
@@ -30,7 +29,7 @@ class OAuth2PasswordGrant<S, F>{
     }
 }
 
-struct OAuth2PasswordGrantAccessTokenRequest<Success: Codable, Failure: Codable>: HTTPRequest {
+struct OAuth2PasswordGrantAccessTokenRequest: HTTPRequest {
     var url: URL
     
     var parameters: [String : Any] {
@@ -39,8 +38,8 @@ struct OAuth2PasswordGrantAccessTokenRequest<Success: Codable, Failure: Codable>
     
     var authorizationType: AuthorizationType = .NoAuth
     
-    typealias successResponse = Success
-    typealias failureResponse = Failure
+    typealias successResponse = OAuth2PasswordGrantSuccessType
+    typealias failureResponse = OAuth2PasswordGrantFailType
     
     var method: HTTPMethod = .POST
     var contentType: ContentType = .xWWWFormURLEncoded
@@ -84,6 +83,26 @@ protocol OAuth2PasswordGrantFailureResponse: Codable {
     var errorURI: String? {get}
 }
 
+struct OAuth2PasswordGrantSuccessType: Codable {
+    var accessToken: String
+    var tokenType: String
+    var expiresIn: Int?
+    var refreshToken: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case tokenType = "token_type"
+        case expiresIn = "expires_in"
+        case refreshToken = "refresh_token"
+    }
+}
+
+struct OAuth2PasswordGrantFailType: Codable {
+    var error: String?
+    var errorDescription: String?
+    var errorURI: String?
+}
+
 enum OAuth2Error: Error {
-    case passwordGrantUnauthorized(service: String)
+    case passwordGrantUnauthorized(service: String, grant: OAuth2PasswordGrant)
 }
