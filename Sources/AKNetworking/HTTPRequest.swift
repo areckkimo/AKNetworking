@@ -8,7 +8,7 @@
 
 import Foundation
 
-protocol HTTPRequest {
+public protocol HTTPRequest {
     associatedtype successResponse: Codable
     associatedtype failureResponse: Codable
     var url: URL { get }
