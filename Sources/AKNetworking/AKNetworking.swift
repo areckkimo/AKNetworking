@@ -17,7 +17,8 @@ public class AKNetworking {
     }
     
     public func saveKeyChainTest(){
-        KeychainWrapper.standard.set(1, forKey: "1")
+        let a = KeychainWrapper.standard.set(1, forKey: "1")
+        print(a)
     }
     
     public func send<Req: HTTPRequest>(_ request:Req, decisions: [Decision]? = nil, completionHandle: @escaping (Result<Req.successResponse, Error>)->Void){
