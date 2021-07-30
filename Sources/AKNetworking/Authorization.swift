@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum AuthorizationType{
+public enum AuthorizationType{
     case NoAuth
     case APIKey(key: String, value: String, place: APIKeyPlace)
     case BasicAuth(userName: String, password: String)

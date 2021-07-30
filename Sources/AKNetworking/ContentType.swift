@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum ContentType: String {
+public enum ContentType: String {
     case none
     case formData = "multipart/form-data"
     case xWWWFormURLEncoded = "application/x-www-form-urlencoded"
