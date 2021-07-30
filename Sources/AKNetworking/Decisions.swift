@@ -93,11 +93,9 @@ struct ParseResultDecision : Decision {
     func apply<Req : HTTPRequest>(request: Req, response: HTTPURLResponse, data: Data, decisions: [Decision], done closure: @escaping (DecisionAction<Req>) -> Void) {
         let decoder = JSONDecoder()
         do {
-            print(Req.successResponse.self)
             let object = try decoder.decode(Req.successResponse.self, from: data)
             closure(.done(object))
         } catch {
-            print(error.localizedDescription)
             closure(.errored(error))
         }
     }

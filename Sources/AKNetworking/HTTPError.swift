@@ -14,6 +14,5 @@ enum HTTPError<Req: HTTPRequest>: Error {
     case nilData
     case tokenError
     case apiError(Req.failureResponse, Int)
-    case unauthoriezed(oAuth2ConfigPlist: String)
     case tokenNotExist
 }

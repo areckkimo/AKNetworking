@@ -21,6 +21,10 @@ class AKNetworking {
         
         do {
             try urlRequest = request.buildRequest()
+            
+        } catch OAuth2Error.passwordGrantUnauthorized(let service) {
+            //retrieve access token
+            return
         } catch {
             completionHandle(.failure(error))
             return

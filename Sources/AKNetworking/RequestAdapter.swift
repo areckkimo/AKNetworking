@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SwiftKeychainWrapper
 
 protocol RequestAdapter {
     func adapted(_ request: URLRequest) throws -> URLRequest
@@ -35,6 +36,7 @@ struct RequestContentAdapter: RequestAdapter {
     }
 }
 
+//MARK: - Data Encoded
 struct URLQueryDataAdapter: RequestAdapter {
     var data: [String: Any]
     func adapted(_ request: URLRequest) throws -> URLRequest {
@@ -54,11 +56,35 @@ struct URLQueryDataAdapter: RequestAdapter {
     }
 }
 
+struct XWWWURLEncodedDataAdapter: RequestAdapter {
+    var data: [String: Any]
+    func adapted(_ request: URLRequest) throws -> URLRequest {
+        var request = request
+        request.httpBody = data.map { "\($0.key)=\($0.value)" }
+            .joined(separator: "&")
+            .data(using: .utf8)
+        return request
+    }
+}
+
 struct JSONDataAdapter: RequestAdapter {
     var data: [String: Any]
     func adapted(_ request: URLRequest) throws -> URLRequest {
         var request = request
         request.httpBody = try? JSONSerialization.data(withJSONObject: data, options: [])
+        return request
+    }
+}
+
+//MARK: - API Auth
+
+struct BasicAuthAdapter: RequestAdapter {
+    let userName: String
+    let password: String
+    func adapted(_ request: URLRequest) throws -> URLRequest {
+        var request = request
+        let authValue = "\(userName):\(password)".data(using: .utf8)?.base64EncodedString()
+        request.addValue("Basic \(authValue!)", forHTTPHeaderField: "Authorization")
         return request
     }
 }
@@ -86,24 +112,15 @@ struct APIKeyAuthAdapter: RequestAdapter {
     }
 }
 
-struct BasicAuthAdapter: RequestAdapter {
-    let userName: String
-    let password: String
+struct OAuth2PasswordGrantAdapter: RequestAdapter {
+    let service: String
     func adapted(_ request: URLRequest) throws -> URLRequest {
         var request = request
-        let authValue = "\(userName):\(password)".data(using: .utf8)?.base64EncodedString()
-        request.addValue("Basic \(authValue!)", forHTTPHeaderField: "Authorization")
-        return request
-    }
-}
-
-struct XWWWURLEncodedDataAdapter: RequestAdapter {
-    var data: [String: Any]
-    func adapted(_ request: URLRequest) throws -> URLRequest {
-        var request = request
-        request.httpBody = data.map { "\($0.key)=\($0.value)" }
-            .joined(separator: "&")
-            .data(using: .utf8)
+        let keychainByService = KeychainWrapper(serviceName: service)
+        guard let accessToken = keychainByService.string(forKey: "access_token"), let tokenType = keychainByService.string(forKey: "token_type") else {
+            throw OAuth2Error.passwordGrantUnauthorized(service: service)
+        }
+        request.addValue("\(tokenType) \(accessToken)", forHTTPHeaderField: "Authorization")
         return request
     }
 }
@@ -145,6 +162,8 @@ extension AuthorizationType {
             return APIKeyAuthAdapter(key: key, value: value, place: place)
         case .BasicAuth(let userName, let password):
             return BasicAuthAdapter(userName: userName, password: password)
+        case .OAuth2PasswordGrant(let service):
+            return OAuth2PasswordGrantAdapter(service: service)
         default:
             return AnyAdapter { $0 }
         }

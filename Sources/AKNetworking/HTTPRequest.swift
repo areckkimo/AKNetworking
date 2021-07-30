@@ -15,7 +15,7 @@ protocol HTTPRequest {
     var method: HTTPMethod { get }
     var parameters: [String : Any] { get }
     var contentType: ContentType { get }
-    var authorizationType: AuthorizationType { get }
+    var authorizationType: AuthorizationType{ get }
     
     var adapters: [RequestAdapter] { get }
     var decisions: [Decision] { get }
