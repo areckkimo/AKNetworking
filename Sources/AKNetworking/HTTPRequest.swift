@@ -25,6 +25,9 @@ public extension HTTPRequest {
     var adapters: [RequestAdapter] {
         return [method.adapter, RequestContentAdapter(method: method, contentType: contentType, content: parameters), authorizationType.authoriaztionAdapter()]
     }
+    var authorizationType: AuthorizationType {
+        return .NoAuth
+    }
     var decisions: [Decision] {
         
         return [RefreshTokenDecision(),

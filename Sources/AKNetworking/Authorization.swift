@@ -12,7 +12,7 @@ public enum AuthorizationType{
     case NoAuth
     case APIKey(key: String, value: String, place: APIKeyPlace)
     case BasicAuth(userName: String, password: String)
-    case OAuth2PasswordGrant(service: String, grant: OAuth2PasswordGrant)
+    case OAuth2PasswordGrant(service: String, tokenRequest: OAuth2PasswordGrantTokenRequest, refreshTokenRequest: OAuth2PasswordGrantRefreshTokenRequest)
     case JWT
 }
 

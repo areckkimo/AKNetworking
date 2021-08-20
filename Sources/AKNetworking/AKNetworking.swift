@@ -10,15 +10,10 @@ import UIKit
 import SwiftKeychainWrapper
 
 public class AKNetworking {
-    var session: URLSession
+    private var session: URLSession
     
     public init(session: URLSession = URLSession.shared) {
         self.session = session
-    }
-    
-    public func saveKeyChainTest(){
-        let a = KeychainWrapper.standard.set(1, forKey: "1")
-        print(a)
     }
     
     public func send<Req: HTTPRequest>(_ request:Req, decisions: [Decision]? = nil, completionHandle: @escaping (Result<Req.successResponse, Error>)->Void){
@@ -28,16 +23,19 @@ public class AKNetworking {
         do {
             try urlRequest = request.buildRequest()
             
-        } catch OAuth2Error.passwordGrantUnauthorized(let service, let grant) {
+        } catch OAuth2Error.passwordGrantUnauthorized(let service, let tokenRequest, _) {
             //retrieve access token
-            grant.retrieveAccessToken { (result) in
+            let grant = OAuth2PasswordGrant()
+            grant.retrieveAccessToken(request: tokenRequest) { (result) in
                 switch result{
                 case .success(let response):
                     let accessToken = response.accessToken
                     let tokenType = response.tokenType
+                    let refreshToken = response.refreshToken ?? ""
                     //save access token and token type
                     KeychainWrapper.standard.set(tokenType, forKey: "\(service)_token_type")
                     KeychainWrapper.standard.set(accessToken, forKey: "\(service)_access_token")
+                    KeychainWrapper.standard.set(refreshToken, forKey: "\(service)_refresh_token")
                     //retry request
                     self.send(request, completionHandle: completionHandle)
                 case .failure(let error):
@@ -49,7 +47,7 @@ public class AKNetworking {
             completionHandle(.failure(error))
             return
         }
-        
+        print(String(data: urlRequest.httpBody!, encoding: .utf8))
         let dataTask = session.dataTask(with: urlRequest) { (data, response, error) in
             
             guard let data = data else{
@@ -68,7 +66,7 @@ public class AKNetworking {
         dataTask.resume()
     }
     
-    func handleDecisions<Req: HTTPRequest>(request: Req, response: HTTPURLResponse, data: Data, decisions: [Decision], completionHandle: @escaping (Result<Req.successResponse, Error>)->Void) {
+    fileprivate func handleDecisions<Req: HTTPRequest>(request: Req, response: HTTPURLResponse, data: Data, decisions: [Decision], completionHandle: @escaping (Result<Req.successResponse, Error>)->Void) {
         
         var decisions = decisions
         let currect = decisions.removeFirst()

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import SwiftKeychainWrapper
 
 public protocol Decision {
     
@@ -31,8 +32,19 @@ struct RefreshTokenDecision: Decision {
     
     func apply<Req : HTTPRequest>(request: Req, response: HTTPURLResponse, data: Data, decisions: [Decision], done closure: @escaping (DecisionAction<Req>) -> Void) {
         //get new access token
-        let httpClient = AKNetworking()
         switch request.authorizationType {
+        case .OAuth2PasswordGrant(let service, _, let refreshTokenRequest):
+            let grant = OAuth2PasswordGrant()
+            grant.refreshAccessToken(request: refreshTokenRequest) { (result) in
+                switch result{
+                case .success(let response):
+                    let accessToken = response.accessToken
+                    KeychainWrapper.standard.set(accessToken, forKey: "\(service)_access_token")
+                    closure(.restartWith(decisions))
+                case .failure(let error):
+                    closure(.errored(error))
+                }
+            }
         default:
             closure(.errored(NSError(domain: "None oAuth2 auth code grand type", code: 0, userInfo: nil)))
         }
