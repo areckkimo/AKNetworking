@@ -33,9 +33,9 @@ struct RefreshTokenDecision: Decision {
     func apply<Req : HTTPRequest>(request: Req, response: HTTPURLResponse, data: Data, decisions: [Decision], done closure: @escaping (DecisionAction<Req>) -> Void) {
         //get new access token
         switch request.authorizationType {
-        case .OAuth2PasswordGrant(let service, _, let refreshTokenRequest):
+        case .OAuth2PasswordGrant(let service, let tokenRequest):
             let grant = OAuth2PasswordGrant()
-            grant.refreshAccessToken(request: refreshTokenRequest) { (result) in
+            grant.refreshAccessToken(request: tokenRequest) { (result) in
                 switch result{
                 case .success(let response):
                     let accessToken = response.accessToken

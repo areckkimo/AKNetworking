@@ -22,7 +22,7 @@ public class OAuth2PasswordGrant{
         }
     }
     
-    func refreshAccessToken(request: OAuth2PasswordGrantRefreshTokenRequest, completion: @escaping (Result<OAuth2PasswordGrantRefreshTokenRequest.successResponse, Error>)->Void){
+    func refreshAccessToken(request: OAuth2PasswordGrantTokenRequest, completion: @escaping (Result<OAuth2PasswordGrantRefreshTokenRequest.successResponse, Error>)->Void){
         let networking = AKNetworking()
         networking.send(request) { (result) in
             switch result{
@@ -128,7 +128,7 @@ public extension OAuth2PasswordGrantRefreshTokenRequestParameters {
 }
 
 public enum OAuth2Error: Error {
-    case passwordGrantUnauthorized(service: String, tokenRequest: OAuth2PasswordGrantTokenRequest, refreshTokenRequest: OAuth2PasswordGrantRefreshTokenRequest)
+    case passwordGrantUnauthorized(service: String, tokenRequest: OAuth2PasswordGrantTokenRequest)
 }
 
 /*

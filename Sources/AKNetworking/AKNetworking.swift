@@ -23,7 +23,7 @@ public class AKNetworking {
         do {
             try urlRequest = request.buildRequest()
             
-        } catch OAuth2Error.passwordGrantUnauthorized(let service, let tokenRequest, _) {
+        } catch OAuth2Error.passwordGrantUnauthorized(let service, let tokenRequest) {
             //retrieve access token
             let grant = OAuth2PasswordGrant()
             grant.retrieveAccessToken(request: tokenRequest) { (result) in
@@ -47,7 +47,6 @@ public class AKNetworking {
             completionHandle(.failure(error))
             return
         }
-        print(String(data: urlRequest.httpBody!, encoding: .utf8))
         let dataTask = session.dataTask(with: urlRequest) { (data, response, error) in
             
             guard let data = data else{

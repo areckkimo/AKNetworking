@@ -64,7 +64,6 @@ struct XWWWURLEncodedDataAdapter: RequestAdapter {
         request.httpBody = data.map { "\($0.key)=\($0.value)" }
             .joined(separator: "&")
             .data(using: .utf8)
-        print(String(data: request.httpBody!, encoding: .utf8))
         return request
     }
 }
@@ -117,11 +116,10 @@ struct APIKeyAuthAdapter: RequestAdapter {
 struct OAuth2PasswordGrantAdapter: RequestAdapter {
     let service: String
     let tokenRequest: OAuth2PasswordGrantTokenRequest
-    let refreshTokenRequest: OAuth2PasswordGrantRefreshTokenRequest
     func adapted(_ request: URLRequest) throws -> URLRequest {
         var request = request
         guard let accessToken = KeychainWrapper.standard.string(forKey: "\(service)_access_token"), let tokenType = KeychainWrapper.standard.string(forKey: "\(service)_token_type") else {
-            throw OAuth2Error.passwordGrantUnauthorized(service: service, tokenRequest: tokenRequest, refreshTokenRequest: refreshTokenRequest)
+            throw OAuth2Error.passwordGrantUnauthorized(service: service, tokenRequest: tokenRequest)
         }
         request.addValue("\(tokenType) \(accessToken)", forHTTPHeaderField: "Authorization")
         return request
@@ -165,8 +163,8 @@ extension AuthorizationType {
             return APIKeyAuthAdapter(key: key, value: value, place: place)
         case .BasicAuth(let userName, let password):
             return BasicAuthAdapter(userName: userName, password: password)
-        case .OAuth2PasswordGrant(let service, let tokenRequest, let refreshTokenRequest):
-            return OAuth2PasswordGrantAdapter(service: service, tokenRequest: tokenRequest, refreshTokenRequest: refreshTokenRequest)
+        case .OAuth2PasswordGrant(let service, let tokenRequest):
+            return OAuth2PasswordGrantAdapter(service: service, tokenRequest: tokenRequest)
         default:
             return AnyAdapter { $0 }
         }
